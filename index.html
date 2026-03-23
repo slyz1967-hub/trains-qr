@@ -2213,11 +2213,8 @@ select.form-input option { background: #fff; color: var(--text); }
       </div>
     </div>
     <div class="header-right">
-      <div class="online-pill" id="onlinePill" onclick="toggleOnline()">
-        <div class="online-dot" id="onlineDot"></div>
-        <span id="onlineLabel">Online</span>
-      </div>
-      <button id="darkModeBtn" onclick="toggleDarkMode()" class="header-logout-btn" style="font-size:16px;padding:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;" title="Toggle dark mode">🌙</button>
+      <button id="darkModeBtn" onclick="toggleDarkMode()" class="header-logout-btn" style="font-size:16px;padding:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;" title="Toggle dark mode">🌙</button>
+      <div onclick="toggleOnline()" title="Toggle online/offline" style="width:10px;height:10px;border-radius:50%;background:#4ade80;flex-shrink:0;cursor:pointer;border:2px solid rgba(255,255,255,0.4);" id="onlineDot"></div>
       <button class="header-logout-btn" onclick="logout()">Sign Out</button>
     </div>
   </div>
@@ -4610,16 +4607,8 @@ function copyContactNumber(number, name) {
 }
 
 function updateOnlineIndicator() {
-  const pill = document.getElementById('onlinePill');
-  const dot  = document.getElementById('onlineDot');
-  const lbl  = document.getElementById('onlineLabel');
-  if (pill) {
-    pill.style.background = isOnline ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.08)';
-    pill.style.color = 'white';
-    pill.style.borderColor = isOnline ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.2)';
-  }
+  const dot = document.getElementById('onlineDot');
   if (dot) dot.style.background = isOnline ? '#4ade80' : '#f87171';
-  if (lbl) lbl.textContent = isOnline ? 'Online' : 'Offline';
   // Show/hide the persistent offline banner
   const banner = document.getElementById('offlineBanner');
   if (banner) banner.style.display = isOnline ? 'none' : 'flex';

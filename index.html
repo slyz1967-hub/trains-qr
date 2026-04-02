@@ -9180,11 +9180,19 @@ function confirmSwap() {
     const _b = JOB_CARD_GROUPS['BNH_' + dk] || [];
     JOB_CARDS = [..._r, ..._b];
   }
-  // Always save the swap so it persists across sessions (OT or regular swap)
+  // Save swap — only mark as OT if rostered day was BLP/SLP
   if (myRosterWeek) {
-    const dayIdx     = getTodayDayIndex();
+    const dayIdx      = getTodayDayIndex();
     const cycledWeek = ((myRosterWeek - 1) % 40) + 1;
-    setOvertimeForDay(cycledWeek, dayIdx, newJC);
+    if (_swapIsOT) {
+      setOvertimeForDay(cycledWeek, dayIdx, newJC);
+    } else {
+      // Regular swap — update job card without flagging as OT
+      MY_JOB_CARD_ID = newJC;
+      const key = cycledWeek + ':' + dayIdx;
+      overtimeOverrides[key] = { jc: newJC, ot: false };
+      saveOvertimeOverrides();
+    }
   }
   closeSwapModal();
   initShiftBanner(); refreshCurrentWorking(); refreshHomeSummary(); updateRosterHomeCard();

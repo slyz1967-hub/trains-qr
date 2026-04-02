@@ -19,9 +19,10 @@ jobs:
 
       - name: Download latest GTFS
         run: |
-          curl -L -o SEQ_GTFS.zip "https://gtfsrt.api.translink.com.au/GTFS/SEQ_GTFS.zip"
+          curl -L -o SEQ_GTFS.zip "https://gtfsrt.api
           mkdir -p gtfs
           unzip -o SEQ_GTFS.zip -d gtfs
+          ls -la gfts/
 
       - name: Run route builder
         run: python3 scripts/build_routes.py --gtfs ./gtfs --out ./route_db.json

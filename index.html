@@ -9182,11 +9182,16 @@ function confirmSwap() {
   }
   // Save swap — only mark as OT if rostered day was BLP/SLP
   if (myRosterWeek) {
-    const dayIdx      = getTodayDayIndex();
-    const cycledWeek = ((myRosterWeek - 1) % 40) + 1;
-    if (_swapIsOT) {
-      setOvertimeForDay(cycledWeek, dayIdx, newJC);
-    } else {
+  const dayIdx     = getTodayDayIndex();
+  const cycledWeek = ((myRosterWeek - 1) % 40) + 1;
+  const key = cycledWeek + ':' + dayIdx;
+  if (_swapIsOT) {
+    overtimeOverrides[key] = { jc: newJC, ot: true, rosteredAs: MY_JOB_CARD_ID };
+  } else {
+    overtimeOverrides[key] = { jc: newJC, ot: false };
+  }
+  saveOvertimeOverrides();
+}
       // Regular swap — update job card without flagging as OT
       MY_JOB_CARD_ID = newJC;
       const key = cycledWeek + ':' + dayIdx;

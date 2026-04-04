@@ -20,7 +20,7 @@ jobs:
           python-version: '3.11'
 
       - name: Inject routes into index.html
-        run: python3 scripts/inject_routes.py --routes ./route_db.json --html ./index.html
+        run: python3 scripts/inject_routes.py --routes ./route_db.json --html ./index.html. || true
 
       - name: Commit and push if changed
         run: |

@@ -19,7 +19,7 @@ jobs:
 
       - name: Download latest GTFS
         run: |
-          curl -L -o SEQ_GTFS.zip "https://gtfsrt.api
+          curl -L -o SEQ_GTFS.zip "https://gtfs.translink.com.au/data/SEQ_GTFS.zip"
           mkdir -p gtfs
           unzip -o SEQ_GTFS.zip -d gtfs
           ls -la gfts/

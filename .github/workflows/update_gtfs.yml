@@ -8,6 +8,8 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -17,16 +19,6 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Download latest GTFS
-        run: |
-          curl -L -o SEQ_GTFS.zip "https://www.data.qld.gov.au/dataset/general-transit-feed-specification-gtfs-seq/resource/be7de52a-7e84-4f76-aedb-2b5762d8a506/download/seq_gtfs.zip"
-          mkdir -p gtfs
-          unzip -o SEQ_GTFS.zip -d gtfs
-          ls -la gfts/
-
-      - name: Run route builder
-        run: python3 scripts/build_routes.py --gtfs ./gtfs --out ./route_db.json
-
       - name: Inject routes into index.html
         run: python3 scripts/inject_routes.py --routes ./route_db.json --html ./index.html
 
@@ -34,6 +26,6 @@ jobs:
         run: |
           git config user.name "GTFS Bot"
           git config user.email "gtfs-bot@users.noreply.github.com"
-          git add index.html route_db.json
-          git diff --staged --quiet || git commit -m "Auto-update routes from GTFS $(date +%Y-%m-%d)"
+          git add index.html
+          git diff --staged --quiet || git commit -m "Auto-update routes from route_db.json $(date +%Y-%m-%d)"
           git push

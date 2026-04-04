@@ -19,7 +19,7 @@ jobs:
 
       - name: Download latest GTFS
         run: |
-          curl -L -o SEQ_GTFS.zip "https://gtfs.translink.com.au/data/SEQ_GTFS.zip"
+          curl -L -o SEQ_GTFS.zip "https://www.data.qld.gov.au/dataset/general-transit-feed-specification-gtfs-seq/resource/be7de52a-7e84-4f76-aedb-2b5762d8a506/download/seq_gtfs.zip"
           mkdir -p gtfs
           unzip -o SEQ_GTFS.zip -d gtfs
           ls -la gfts/

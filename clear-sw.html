@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRAINS — Clearing Cache</title>
+  <style>
+    body { margin: 0; font-family: -apple-system, sans-serif; background: #8B1A2A; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; box-sizing: border-box; text-align: center; }
+    h1 { font-size: 22px; margin-bottom: 12px; }
+    p { font-size: 15px; opacity: 0.8; margin-bottom: 24px; line-height: 1.6; }
+    a { display: block; background: #FFD000; color: #3A2800; font-weight: 700; font-size: 16px; padding: 16px 24px; border-radius: 12px; text-decoration: none; }
+    #status { font-size: 13px; opacity: 0.7; margin-bottom: 20px; min-height: 20px; }
+  </style>
+</head>
+<body>
+  <h1>🧹 Clearing app cache…</h1>
+  <div id="status">Working…</div>
+  <p>This removes the old cached version so TRAINS loads correctly again.</p>
+  <a href="/trains-qr/">Open TRAINS →</a>
+  <script>
+    var status = document.getElementById('status');
+    async function clearAll() {
+      var msgs = [];
+      // Unregister all service workers
+      if ('serviceWorker' in navigator) {
+        var regs = await navigator.serviceWorker.getRegistrations();
+        for (var r of regs) { await r.unregister(); msgs.push('Service worker removed'); }
+      }
+      // Clear all caches
+      if ('caches' in window) {
+        var keys = await caches.keys();
+        for (var k of keys) { await caches.delete(k); msgs.push('Cache cleared: ' + k); }
+      }
+      status.textContent = msgs.length ? msgs.join(' · ') : 'Nothing to clear — you\'re good!';
+    }
+    clearAll().catch(function(e) { status.textContent = 'Done — tap Open TRAINS below.'; });
+  </script>
+</body>
+</html>

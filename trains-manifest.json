@@ -1,0 +1,23 @@
+{
+  "name": "TRAINS — Queensland Rail",
+  "short_name": "TRAINS",
+  "description": "Queensland Rail Guard Console",
+  "start_url": "/trains-qr/",
+  "scope": "/trains-qr/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#8B1A2A",
+  "theme_color": "#8B1A2A",
+  "icons": [
+    {
+      "src": "/trains-qr/trains-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/trains-qr/trains-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

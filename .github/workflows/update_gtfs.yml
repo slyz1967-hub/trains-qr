@@ -3,7 +3,7 @@ name: Update GTFS Routes
 on:
   schedule:
     - cron: '0 2 * * 1'  # Every Monday at 2am
-  workflow_dispatch:       # Allow manual trigger
+  workflow_dispatch:      # Allow manual trigger
 
 jobs:
   update:
@@ -19,13 +19,22 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Download GTFS
+        run: |
+          mkdir -p gtfs
+          curl -L "https://gtfsrt.api.translink.com.au/GTFS/SEQ_GTFS.zip" -o gtfs.zip
+          unzip -o gtfs.zip -d gtfs
+
+      - name: Build route_db.json
+        run: python3 scripts/build_routes.py --gtfs ./gtfs --output ./route_db.json
+
       - name: Inject routes into index.html
-        run: python3 scripts/inject_routes.py --routes ./route_db.json --html ./index.html. || true
+        run: python3 scripts/inject_routes.py --routes ./route_db.json --html ./index.html || true
 
       - name: Commit and push if changed
         run: |
           git config user.name "GTFS Bot"
           git config user.email "gtfs-bot@users.noreply.github.com"
-          git add index.html
-          git diff --staged --quiet || git commit -m "Auto-update routes from route_db.json $(date +%Y-%m-%d)"
+          git add index.html route_db.json
+          git diff --staged --quiet || git commit -m "Auto-update routes from GTFS $(date +%Y-%m-%d)"
           git push

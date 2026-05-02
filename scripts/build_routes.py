@@ -334,25 +334,18 @@ def main():
 
     tt_db = build_timetable(args.gtfs)
 
-    # Compress and base64 encode
-    json_str = json.dumps(tt_db, separators=(',', ':'))
-    compressed = zlib.compress(json_str.encode(), level=9)
-    b64 = base64.b64encode(compressed).decode()
+   # Compress and base64 encode each day separately
+        output = {'days': {}, 'counts': {}, 'feed_end': None}
 
-    # Save as JSON with the b64 string and metadata
-    output = {
-        'b64': b64,
-        'days': list(tt_db.keys()),
-        'counts': {d: len(tt_db[d]) for d in tt_db},
-    }
-    with open(args.output, 'w') as f:
-        json.dump(output, f)
+        for day in tt_db:
+            day_json = json.dumps(tt_db[day], separators=(',', ':'))
+            compressed = zlib.compress(day_json.encode(), level=9)
+            b64 = base64.b64encode(compressed).decode()
+            output['days'][day] = b64
+            output['counts'][day] = len(tt_db[day])
+            print(f'  {day}: {len(tt_db[day])} trains, {len(b64)} chars')
 
-    print(f'\nOutput written to {args.output}')
-    print(f'B64 length: {len(b64)} chars')
-    for d in tt_db:
-        print(f'  {d}: {len(tt_db[d])} trains')
+        with open(args.output, 'w') as f:
+            json.dump(output, f)
 
-
-if __name__ == '__main__':
-    main()
+        print(f'\nOutput written to {args.output}')

@@ -259,7 +259,6 @@ def build_timetable(gtfs_dir):
                 continue
             tid = r['trip_id']
             train_no = tid.split('-')[-1]
-            if not re.match(r'^\d', train_no): cont
             sid = r['service_id']
             for day in day_services:
                 if sid in day_services[day]:

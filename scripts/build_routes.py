@@ -331,21 +331,18 @@ def main():
     parser.add_argument('--gtfs', required=True, help='Path to extracted GTFS directory')
     parser.add_argument('--output', default='route_db.json', help='Output JSON file')
     args = parser.parse_args()
-
     tt_db = build_timetable(args.gtfs)
+    output = {'days': {}, 'counts': {}, 'feed_end': None}
+    for day in tt_db:
+        day_json = json.dumps(tt_db[day], separators=(',', ':'))
+        compressed = zlib.compress(day_json.encode(), level=9)
+        b64 = base64.b64encode(compressed).decode()
+        output['days'][day] = b64
+        output['counts'][day] = len(tt_db[day])
+        print(f'  {day}: {len(tt_db[day])} trains, {len(b64)} chars')
+    with open(args.output, 'w') as f:
+        json.dump(output, f)
+    print(f'\nOutput written to {args.output}')
 
-   # Compress and base64 encode each day separately
-        output = {'days': {}, 'counts': {}, 'feed_end': None}
-
-        for day in tt_db:
-            day_json = json.dumps(tt_db[day], separators=(',', ':'))
-            compressed = zlib.compress(day_json.encode(), level=9)
-            b64 = base64.b64encode(compressed).decode()
-            output['days'][day] = b64
-            output['counts'][day] = len(tt_db[day])
-            print(f'  {day}: {len(tt_db[day])} trains, {len(b64)} chars')
-
-        with open(args.output, 'w') as f:
-            json.dump(output, f)
-
-        print(f'\nOutput written to {args.output}')
+if __name__ == '__main__':
+    main()

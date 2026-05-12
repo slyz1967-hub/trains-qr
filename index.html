@@ -10,7 +10,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <!--TRAINS_VERSION:1775000771-->
+    <!--TRAINS_VERSION:1775000772-->
     <!--
         CONTENT SECURITY POLICY
         The <meta> tag below locks down which scripts the browser will execute.
@@ -51,7 +51,7 @@
                 }
             });
         }
-        var CURRENT_VERSION = '1775000771';
+        var CURRENT_VERSION = '1775000772';
         // Check version — if newer version detected, flag it rather than auto-reload
         // so a notification banner can be shown to the guard
         var storedVersion = localStorage.getItem('trains-version');
@@ -4666,6 +4666,12 @@ Next
 <div style="font-size:12px;color:var(--text);" id="cwNext"></div>
 </div>
 
+<!-- Terminus weather block — shown when weather data available -->
+<div id="cwWeatherBlock" style="display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;align-items:center;gap:7px;">
+<span id="cwWeatherIcon" style="font-size:16px;">🌦️</span>
+<span id="cwWeatherDesc" style="font-size:11px;color:var(--text-3);"></span>
+</div>
+
 </div>
 
 
@@ -4858,7 +4864,42 @@ How to use TRAINS
 </div>
 </div>
 </div>
+<div class="qa-btn" onclick="openStationAccessibility()">
+<div class="qa-icon">
+♿
+</div>
+<div>
+<div class="qa-text">
+Station Access
+</div>
+<div class="qa-sub">
+Lifts &amp; ramps
+</div>
+</div>
+</div>
 
+</div>
+
+<!-- Station Accessibility panel (slide-up) -->
+<div id="stationAccPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:900;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)closeStationAccessibility()">
+<div style="background:var(--surface);border-radius:16px 16px 0 0;width:100%;max-width:430px;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -4px 24px rgba(0,0,0,0.25);">
+<div style="padding:14px 16px 10px;border-bottom:1px solid var(--border);flex-shrink:0;">
+<div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 12px;"></div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+<div style="font-size:15px;font-weight:700;">♿ Station Accessibility</div>
+<button onclick="closeStationAccessibility()" style="background:none;border:none;font-size:20px;color:var(--text-3);cursor:pointer;padding:2px 6px;">×</button>
+</div>
+<input type="search" placeholder="Search station…" oninput="filterAccessibility(this.value)"
+style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:var(--surface);color:var(--text);box-sizing:border-box;" autocomplete="off" autocorrect="off">
+</div>
+<div style="display:flex;padding:4px 8px;background:var(--surface-2);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;flex-shrink:0;">
+<span style="flex:3;padding:4px;">Station</span>
+<span style="width:32px;text-align:center;padding:4px;">Lift</span>
+<span style="width:36px;text-align:center;padding:4px;">Ramp</span>
+<span style="flex:2;padding:4px;">Notes</span>
+</div>
+<div id="accList" style="overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;"></div>
+</div>
 </div>
 
 <div class="section-label">
@@ -8528,6 +8569,7 @@ No reports submitted this shift
 
 <div class="ho-footer">
 <button class="ho-back-btn" onclick="cancelHandover()">← Back</button>
+<button id="hoAckBtn" onclick="acknowledgeHandover()" style="flex:1.5;padding:12px;background:rgba(10,122,64,0.12);border:1.5px solid rgba(10,122,64,0.35);border-radius:10px;font-size:13px;font-weight:700;color:var(--green);cursor:pointer;font-family:inherit;">✓ Acknowledge</button>
 <button class="ho-confirm-btn" onclick="doLogout()">Sign Off →</button>
 </div>
 </div>
@@ -9103,7 +9145,7 @@ function _devFireSearch(val) {
 function _devToggleSupervisor() {
   // Toggle between guard app and supervisor view
   const guardApp = document.querySelector('.app');
-  const supView = document.getElementById('supervisorView') || document.getElementById('sup-view') || document.getElementById('supDashboard');
+  const supView = document.getElementById('supervisorScreen') || document.getElementById('supervisorView') || document.getElementById('sup-view') || document.getElementById('supDashboard');
   if (supView && supView.style.display !== 'none') {
     if (guardApp) guardApp.style.display = '';
     supView.style.display = 'none';
@@ -10508,6 +10550,16 @@ return Object.entries(STATION_NAMES)
     return {code, n: name, lift: d.lift, ramp: d.ramp, note: d.note};
   })
   .sort((a, b) => a.n.localeCompare(b.n));
+}
+function openStationAccessibility() {
+  const panel = document.getElementById('stationAccPanel');
+  if (!panel) return;
+  panel.style.display = 'flex';
+  filterAccessibility('');
+}
+function closeStationAccessibility() {
+  const panel = document.getElementById('stationAccPanel');
+  if (panel) panel.style.display = 'none';
 }
 function filterAccessibility(q) {
 const el = document.getElementById('accList');

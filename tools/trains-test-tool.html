@@ -1,5 +1,5 @@
-<!-- TRAINS version: 8 -->
-<!-- Update notes: Drop consistent-offset threshold from 80% to 65% to catch trains like 1003 where anchor skew widens the spread -->
+<!-- TRAINS version: 9 -->
+<!-- Update notes: Revert threshold to 80%, widen per-stop tolerance to ±2 mins — catches trains like 1003 with gradual offset spread without over-suppressing -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -551,9 +551,9 @@ function populateGTFS() {
       const nonAnchorDeltas = stopDeltas.filter(s => s.code !== first[0]);
       const diffs = (nonAnchorDeltas.length >= 2 ? nonAnchorDeltas : stopDeltas).map(s => s.diff);
       const medianDiff = diffs.slice().sort((a,b)=>a-b)[Math.floor(diffs.length/2)];
-      const consistent = diffs.filter(d => Math.abs(d - medianDiff) <= 1).length / diffs.length;
+      const consistent = diffs.filter(d => Math.abs(d - medianDiff) <= 2).length / diffs.length;
 
-      if (consistent >= 0.65 && Math.abs(medianDiff) >= 3) {
+      if (consistent >= 0.8 && Math.abs(medianDiff) >= 3) {
         wrongAnchorTrains.push({ day: day.toUpperCase(), trainNo, stops: stopDeltas.length, offset: medianDiff });
       } else {
         for (const s of stopDeltas) {

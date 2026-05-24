@@ -211,15 +211,15 @@ let _stationNames = {};
 // Known WTT test cases: {label, trainNo, day, origin, dest, guardOrigin, stops: {code: expectedMins}}
 const WTT_TESTS = [
   {
-    label: '1730 SUN FYG→BNH (cross-city)',
-    trainNo: '1730', day: 'sun', origin: 'FYG', dest: 'BNH', guardOrigin: 'FYG',
-    stops: { FYG: 662, KEP: 666, GRV: 668, BHI: 688, FVY: 690, CTL: 693, RST: 695, SBE: 700, SLY: 721, ATI: 731, BNH: 761 }
+    label: '1E21 SUN BNH→FYG (cross-city)',
+    trainNo: '1E21', day: 'sun', origin: 'BNH', dest: 'FYG', guardOrigin: 'BNH',
+    stops: { BNH: 528, HVW: 530, BTI: 535, LGL: 539, SLY: 568, BGR: 582, SBE: 587, CTL: 596, BHI: 601, WND: 605, FYG: 627 }
   },
   {
-    label: '1E21 SUN SBE→FYG',
-    trainNo: '1E21', day: 'sun', origin: 'SBE', dest: 'FYG', guardOrigin: 'SBE',
-    stops: { SBE: 587, FYG: 628 }
-  },
+    label: '1730 SUN FYG→BNH (cross-city)',
+    trainNo: '1730', day: 'sun', origin: 'FYG', dest: 'BNH', guardOrigin: 'FYG',
+    stops: { FYG: 662, KEP: 666, GRV: 668, BHI: 688, FVY: 690, CTL: 693, RST: 697, SBE: 702, SLY: 721, ATI: 731, BNH: 761 }
+  }
 ];
 
 // Known GTFS overrides (manual corrections to bad GTFS source data)

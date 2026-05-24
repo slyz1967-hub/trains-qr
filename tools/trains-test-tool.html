@@ -220,6 +220,32 @@ const WTT_TESTS = [
     trainNo: '1730', day: 'sun', origin: 'FYG', dest: 'BNH', guardOrigin: 'FYG',
     stops: { FYG: 662, KEP: 666, GRV: 668, BHI: 688, FVY: 690, CTL: 693, RST: 697, SBE: 702, SLY: 721, ATI: 731, BNH: 761 }
   }
+,
+  {
+    label: 'DS42 MON DBN→BGR',
+    trainNo: 'DS42', day: 'mon', origin: 'DBN', dest: 'BGR', guardOrigin: 'DBN',
+    stops: { DBN: 508, EGJ: 518, BHI: 526, CTL: 531, BGR: 545 }
+  },
+  {
+    label: 'DG18 MON BDT→BGR',
+    trainNo: 'DG18', day: 'mon', origin: 'BDT', dest: 'BGR', guardOrigin: 'BDT',
+    stops: { BDT: 484, EGJ: 499, BHI: 505, RST: 513, BGR: 522 }
+  },
+  {
+    label: 'DK06 MON BHI→SPC',
+    trainNo: 'DK06', day: 'mon', origin: 'BHI', dest: 'SPC', guardOrigin: 'BHI',
+    stops: { BHI: 337, RST: 345, IRP: 370, DAR: 384, SPC: 395 }
+  },
+  {
+    label: 'DK06 MON SPC→KRP',
+    trainNo: 'DK06', day: 'mon', origin: 'SPC', dest: 'KRP', guardOrigin: 'SPC',
+    stops: { SPC: 395, DAR: 406, EGJ: 439, NTG: 442, KRP: 486 }
+  },
+  {
+    label: '1Y17 MON IPW→KRP',
+    trainNo: '1Y17', day: 'mon', origin: 'RSW', dest: 'KRP', guardOrigin: 'RSW',
+    stops: { RSW: 450, IPS: 471, BHI: 527, EGJ: 533, KRP: 580 }
+  }
 ];
 
 // Known GTFS overrides (manual corrections to bad GTFS source data)

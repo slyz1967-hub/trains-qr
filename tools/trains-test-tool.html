@@ -1,5 +1,5 @@
-<!-- TRAINS version: 6 -->
-<!-- Update notes: Anomaly detector now suppresses trains with consistent offset (≥80% stops within ±1 min of median delta) — filters wrong-anchor noise; genuine irregular stops still shown -->
+<!-- TRAINS version: 7 -->
+<!-- Update notes: Exclude anchor stop from consistency check — anchor's own delta is always skewed in wrong-anchor cases, was preventing correct suppression of trains like 1003 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -546,8 +546,10 @@ function populateGTFS() {
       }
       if (stopDeltas.length < 3) continue;
 
-      // Check if this train has a consistent offset (≥80% of stops within ±1 min of each other's delta)
-      const diffs = stopDeltas.map(s => s.diff);
+      // Check if this train has a consistent offset (≥80% of non-anchor stops within ±1 min of each other's delta)
+      // Exclude the anchor stop itself — its delta is always distorted by the wrong-anchor mismatch
+      const nonAnchorDeltas = stopDeltas.filter(s => s.code !== first[0]);
+      const diffs = (nonAnchorDeltas.length >= 2 ? nonAnchorDeltas : stopDeltas).map(s => s.diff);
       const medianDiff = diffs.slice().sort((a,b)=>a-b)[Math.floor(diffs.length/2)];
       const consistent = diffs.filter(d => Math.abs(d - medianDiff) <= 1).length / diffs.length;
 

@@ -286,12 +286,17 @@ function extractRouteDB() {
   const start = _html.indexOf('const ROUTE_DB = {');
   const end = _html.indexOf('\n// ── SCHEDULE SEARCH');
   if (start === -1 || end === -1) throw new Error('Cannot find ROUTE_DB in file');
-  const code = _html.slice(start, end);
+  let code = _html.slice(start, end);
+  code = code.replace(/\bconst ROUTE_DB\b/, 'var ROUTE_DB');
+  code = code.replace(/\bconst ([a-zA-Z_]+Set)\b/g, 'var $1');
+  code = code.replace(/\bfunction sliceRoute\b/, 'var sliceRoute = function sliceRoute');
+  code = code.replace(/\bfunction findRoute\b/, 'var findRoute = function findRoute');
   try {
-    eval(code);
-    _findRoute = findRoute;
-    _sliceRoute = sliceRoute;
-    _routeDB = ROUTE_DB;
+    const fn = new Function(code + '\nreturn {ROUTE_DB: ROUTE_DB, findRoute: findRoute, sliceRoute: sliceRoute};');
+    const result = fn();
+    _findRoute = result.findRoute;
+    _sliceRoute = result.sliceRoute;
+    _routeDB = result.ROUTE_DB;
   } catch(e) {
     throw new Error('Cannot eval ROUTE_DB: ' + e.message);
   }
@@ -322,6 +327,7 @@ function runRouteAudit() {
   _auditResults = [];
   for (const [name, arr] of Object.entries(_routeDB)) {
     if (!Array.isArray(arr) || arr.length < 2) continue;
+    if (!arr[0] || typeof arr[0] !== 'object' || !('mins' in arr[0])) continue;
     const mins = arr.map(s => s.mins);
     let ascending = true;
     let firstBad = -1;

@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 22 -->
-<!-- Update notes: Fixed DK06 BHI→SPC expected stop code SPC→SPF to match BHI_SPF_NEW route array -->
+<!-- TOOL_VERSION: 23 -->
+<!-- Update notes: Fixed GTFS_OVERRIDES: SUN 1730 BHI gtfsWrong 691→688 (DB already corrected); MON 1005 THG gtfsWrong 610→410; added MON 1003 GCV, MON 1005 RVW, MON 1005 RDB anomalies -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -254,9 +254,12 @@ const WTT_TESTS = [
 
 // Known GTFS overrides (manual corrections to bad GTFS source data)
 const GTFS_OVERRIDES = [
-  { day: 'SUN', train: '1730', stop: 'BHI', gtfsWrong: 691, correct: 688, reason: 'GTFS dwell error at Bowen Hills' },
+  { day: 'SUN', train: '1730', stop: 'BHI', gtfsWrong: 688, correct: 688, reason: 'GTFS dwell error at Bowen Hills (already corrected in TT DB)' },
   { day: 'MON', train: '1005', stop: 'TGA', gtfsWrong: 346, correct: 392, reason: 'GTFS time wrong — Taringa shows 05:46, WTT is 06:32' },
-  { day: 'MON', train: '1005', stop: 'THG', gtfsWrong: 610, correct: 346, reason: 'GTFS time wrong — Thagoona shows 10:10, WTT is 05:46' },
+  { day: 'MON', train: '1005', stop: 'THG', gtfsWrong: 410, correct: 346, reason: 'GTFS time wrong — Thagoona shows 06:50, WTT is 05:46' },
+  { day: 'MON', train: '1003', stop: 'GCV', gtfsWrong: 366, correct: 386, reason: 'GTFS time wrong — Graceville shows 06:06, WTT is 06:26' },
+  { day: 'MON', train: '1005', stop: 'RVW', gtfsWrong: 377, correct: 374, reason: 'GTFS time wrong — Riverview shows 06:17, WTT is 06:14' },
+  { day: 'MON', train: '1005', stop: 'RDB', gtfsWrong: 380, correct: 377, reason: 'GTFS time wrong — Redbank shows 06:20, WTT is 06:17' },
 ];
 
 // ── File loading ───────────────────────────────────────────────────

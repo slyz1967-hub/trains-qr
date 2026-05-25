@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 26 -->
-<!-- Update notes: Added configurable threshold slider (3–30 min) to GTFS anomaly detector -->
+<!-- TOOL_VERSION: 27 -->
+<!-- Update notes: Added GTFS stop code errors: 10U5/16X0/16Y0 use TGA (Taringa) where stop is actually THG (Thagoona) — Taringa is express on these services so GTFS has no valid TGA entry -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -265,6 +265,9 @@ const GTFS_OVERRIDES = [
   { day: 'MON', train: '1003', stop: 'GCV', gtfsWrong: 366, correct: 386, reason: 'GTFS time wrong — Graceville shows 06:06, WTT is 06:26' },
   { day: 'MON', train: '1005', stop: 'RVW', gtfsWrong: 377, correct: 374, reason: 'GTFS time wrong — Riverview shows 06:17, WTT is 06:14' },
   { day: 'MON', train: '1005', stop: 'RDB', gtfsWrong: 380, correct: 377, reason: 'GTFS time wrong — Redbank shows 06:20, WTT is 06:17' },
+  { day: 'MON', train: '10U5', stop: 'TGA', gtfsWrong: 411, correct: 411, reason: 'GTFS stop code error — TGA (Taringa) should be THG (Thagoona); Taringa is express on this service' },
+  { day: 'MON', train: '16X0', stop: 'TGA', gtfsWrong: 1044, correct: 1044, reason: 'GTFS stop code error — TGA (Taringa) should be THG (Thagoona); Taringa is express on this service' },
+  { day: 'MON', train: '16Y0', stop: 'TGA', gtfsWrong: 1104, correct: 1104, reason: 'GTFS stop code error — TGA (Taringa) should be THG (Thagoona); Taringa is express on this service' },
 ];
 
 // ── File loading ───────────────────────────────────────────────────

@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 21 -->
-<!-- Update notes: IN FILE? badge now shows actual found value for debugging; improved key lookup -->
+<!-- TOOL_VERSION: 22 -->
+<!-- Update notes: Added top-trains-by-anomaly-count summary table above anomaly list with avg offset per train -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -568,17 +568,28 @@ function populateGTFS() {
   if (anomalies.length === 0) {
     ael.innerHTML = '<p class="empty" style="color:#66bb6a">✓ No anomalies detected</p>';
   } else {
+    // Group by train
+    const byTrain = {};
+    for (const a of anomalies) {
+      const k = a.day + ' ' + a.trainNo;
+      if (!byTrain[k]) byTrain[k] = { count: 0, diffs: [] };
+      byTrain[k].count++;
+      byTrain[k].diffs.push(a.diff * Math.sign(a.actual - a.predicted));
+    }
+    const sorted = Object.entries(byTrain).sort((a,b) => b[1].count - a[1].count).slice(0, 20);
     let html = `<p style="font-size:12px;color:#888;margin-bottom:8px">${anomalies.length} stops differ from route prediction by ≥3 mins</p>`;
+    html += `<p style="font-size:11px;color:#aaa;margin-bottom:4px">Top trains by anomaly count:</p>`;
+    html += `<table><thead><tr><th>Day</th><th>Train</th><th>Stops</th><th>Avg Δ</th></tr></thead><tbody>`;
+    for (const [k, v] of sorted) {
+      const [day, trainNo] = k.split(' ');
+      const avg = Math.round(v.diffs.reduce((a,b)=>a+b,0)/v.diffs.length);
+      html += `<tr class="warn"><td>${day}</td><td class="route-code">${trainNo}</td><td>${v.count}</td><td style="font-family:monospace;color:#FFD000">${avg>0?'+':''}${avg} min</td></tr>`;
+    }
+    html += '</tbody></table>';
+    html += `<p style="font-size:11px;color:#aaa;margin:12px 0 4px">All anomalies:</p>`;
     html += `<table><thead><tr><th>Day</th><th>Train</th><th>Stop</th><th>TT DB</th><th>Route Predicts</th><th>Δ</th></tr></thead><tbody>`;
     for (const a of anomalies.slice(0, 50)) {
-      html += `<tr class="warn">
-        <td>${a.day}</td>
-        <td class="route-code">${a.trainNo}</td>
-        <td class="stop-code">${a.code}</td>
-        <td class="time">${fmt(a.actual)}</td>
-        <td class="time">${fmt(a.predicted)}</td>
-        <td style="font-family:monospace;color:#FFD000">${a.diff > 0 ? '+' : '-'}${a.diff} min</td>
-      </tr>`;
+      html += `<tr class="warn"><td>${a.day}</td><td class="route-code">${a.trainNo}</td><td class="stop-code">${a.code}</td><td class="time">${fmt(a.actual)}</td><td class="time">${fmt(a.predicted)}</td><td style="font-family:monospace;color:#FFD000">${a.diff > 0 ? '+' : '-'}${a.diff} min</td></tr>`;
     }
     if (anomalies.length > 50) html += `<tr><td colspan="6" style="color:#888;font-size:12px;padding:8px">…and ${anomalies.length-50} more</td></tr>`;
     html += '</tbody></table>';

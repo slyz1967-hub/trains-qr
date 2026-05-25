@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 26 -->
-<!-- Update notes: Added GTFS stop code debug tool; built on clean v21 base -->
+<!-- TOOL_VERSION: 21 -->
 <!-- Update notes: IN FILE? badge now shows actual found value for debugging; improved key lookup -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -175,14 +174,6 @@ pre.detail { background: #0d1117; padding: 10px; border-radius: 6px; font-size: 
         <h3>🗂 GTFS Known Error Override Table</h3>
         <p style="font-size:13px;color:#888;margin-bottom:12px">Trains where GTFS source data is wrong and manual corrections apply.</p>
         <div id="gtfsResults"></div>
-        <div style="margin-top:12px">
-          <input id="debugTrain" placeholder="Train e.g. 1005" style="padding:6px 10px;border-radius:6px;border:1px solid #444;background:#1a1a2e;color:#fff;font-size:13px;width:110px">
-          <select id="debugDay" style="padding:6px;border-radius:6px;border:1px solid #444;background:#1a1a2e;color:#fff;font-size:13px">
-            <option value="mon">MON</option><option value="fri">FRI</option><option value="sat">SAT</option><option value="sun">SUN</option>
-          </select>
-          <button onclick="debugStops()" style="padding:6px 12px;border-radius:6px;background:#4a6fa5;color:#fff;border:none;cursor:pointer;font-size:13px">Show GTFS Codes</button>
-        </div>
-        <div id="debugResult" style="margin-top:8px;font-size:12px;font-family:monospace;color:#aaa;max-height:200px;overflow-y:auto"></div>
       </div>
       <div class="card">
         <h3>⚠️ Potential GTFS Anomalies</h3>
@@ -511,16 +502,6 @@ function runAdhoc() {
 }
 
 // ── GTFS Overrides ─────────────────────────────────────────────────
-function debugStops() {
-  const train = document.getElementById('debugTrain').value.trim();
-  const day = document.getElementById('debugDay').value;
-  const db = _ttDBs[day];
-  const el = document.getElementById('debugResult');
-  if (!db || !db[train]) { el.textContent = 'Not found: ' + train + ' ' + day.toUpperCase(); return; }
-  const lines = Object.entries(db[train]).sort((a,b)=>a[1]-b[1]).map(([k,v]) => k + ' → ' + (_gtfsCodeMap[k]||_yardMap[k]||k) + ' @ ' + fmt(v));
-  el.innerHTML = lines.join('<br>');
-}
-
 function populateGTFS() {
   // Known overrides table
   const el = document.getElementById('gtfsResults');

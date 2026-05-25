@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 23 -->
-<!-- Update notes: Fixed GTFS_OVERRIDES: SUN 1730 BHI gtfsWrong 691→688 (DB already corrected); MON 1005 THG gtfsWrong 610→410; added MON 1003 GCV, MON 1005 RVW, MON 1005 RDB anomalies -->
+<!-- TOOL_VERSION: 24 -->
+<!-- Update notes: Fixed runTests anchor logic — previously used global TT DB anchor which may not be in the tested route segment (e.g. DK06 anchor=KRP not in BHI→SPC); now finds first TT DB stop actually present in route -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -425,8 +425,16 @@ function runTests() {
   for (const t of WTT_TESTS) {
     const db = _ttDBs[t.day];
     const ttEntry = db && db[t.trainNo];
-    const anchor = ttEntry ? Object.entries(ttEntry).sort((a,b)=>a[1]-b[1])[0] : null;
     const route = _findRoute ? _findRoute(t.origin, t.dest, t.trainNo, t.guardOrigin) : null;
+
+    // Find best anchor: a TT DB stop that exists in this route segment
+    let anchor = null;
+    if (ttEntry && route) {
+      const sorted = Object.entries(ttEntry).sort((a,b)=>a[1]-b[1]);
+      for (const [code, mins] of sorted) {
+        if (route.find(s => s.code === code)) { anchor = [code, mins]; break; }
+      }
+    }
 
     for (const [stopCode, expectedMins] of Object.entries(t.stops)) {
       let got = null;

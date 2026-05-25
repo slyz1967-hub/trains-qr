@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 25 -->
-<!-- Update notes: Fixed iOS file picker - replaced programmatic click with direct label/input for iOS Safari compatibility -->
+<!-- TOOL_VERSION: 26 -->
+<!-- Update notes: Added GTFS stop code debug tool; built on clean v21 base -->
+<!-- Update notes: IN FILE? badge now shows actual found value for debugging; improved key lookup -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -107,9 +108,8 @@ pre.detail { background: #0d1117; padding: 10px; border-radius: 6px; font-size: 
 <div class="container">
   <div class="drop-zone" id="dropZone">
     <h2>📂 Drop index.html here</h2>
-    <p>Or tap below to select your TRAINS index.html file</p>
-    <label for="fileInput" style="display:inline-block;margin-top:8px;padding:8px 20px;background:#4a6fa5;color:#fff;border-radius:6px;cursor:pointer;font-size:14px">📁 Select File</label>
-    <input type="file" id="fileInput" accept=".html" style="display:none">
+    <p>Or click to select your TRAINS index.html file</p>
+    <input type="file" id="fileInput" accept=".html">
   </div>
 
   <div id="loading" style="display:none">⏳ Analysing file…</div>
@@ -175,14 +175,14 @@ pre.detail { background: #0d1117; padding: 10px; border-radius: 6px; font-size: 
         <h3>🗂 GTFS Known Error Override Table</h3>
         <p style="font-size:13px;color:#888;margin-bottom:12px">Trains where GTFS source data is wrong and manual corrections apply.</p>
         <div id="gtfsResults"></div>
-        <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <input id="debugTrain" placeholder="Train e.g. 1005" style="padding:6px 10px;border-radius:6px;border:1px solid #444;background:#1a1a2e;color:#fff;font-size:13px;width:120px">
-          <select id="debugDay" style="padding:6px 10px;border-radius:6px;border:1px solid #444;background:#1a1a2e;color:#fff;font-size:13px">
+        <div style="margin-top:12px">
+          <input id="debugTrain" placeholder="Train e.g. 1005" style="padding:6px 10px;border-radius:6px;border:1px solid #444;background:#1a1a2e;color:#fff;font-size:13px;width:110px">
+          <select id="debugDay" style="padding:6px;border-radius:6px;border:1px solid #444;background:#1a1a2e;color:#fff;font-size:13px">
             <option value="mon">MON</option><option value="fri">FRI</option><option value="sat">SAT</option><option value="sun">SUN</option>
           </select>
-          <button onclick="debugStops()" style="padding:6px 14px;border-radius:6px;background:#4a6fa5;color:#fff;border:none;cursor:pointer;font-size:13px">Show Raw GTFS Codes</button>
+          <button onclick="debugStops()" style="padding:6px 12px;border-radius:6px;background:#4a6fa5;color:#fff;border:none;cursor:pointer;font-size:13px">Show GTFS Codes</button>
         </div>
-        <div id="debugResult" style="margin-top:8px;font-size:12px;font-family:monospace;color:#aaa"></div>
+        <div id="debugResult" style="margin-top:8px;font-size:12px;font-family:monospace;color:#aaa;max-height:200px;overflow-y:auto"></div>
       </div>
       <div class="card">
         <h3>⚠️ Potential GTFS Anomalies</h3>
@@ -516,9 +516,8 @@ function debugStops() {
   const day = document.getElementById('debugDay').value;
   const db = _ttDBs[day];
   const el = document.getElementById('debugResult');
-  if (!db || !db[train]) { el.textContent = 'Train not found in ' + day.toUpperCase(); return; }
-  const stops = db[train];
-  const lines = Object.entries(stops).sort((a,b)=>a[1]-b[1]).map(([k,v]) => `${k} → mapped: ${_gtfsCodeMap[k]||_yardMap[k]||k} @ ${fmt(v)}`);
+  if (!db || !db[train]) { el.textContent = 'Not found: ' + train + ' ' + day.toUpperCase(); return; }
+  const lines = Object.entries(db[train]).sort((a,b)=>a[1]-b[1]).map(([k,v]) => k + ' → ' + (_gtfsCodeMap[k]||_yardMap[k]||k) + ' @ ' + fmt(v));
   el.innerHTML = lines.join('<br>');
 }
 
@@ -588,28 +587,17 @@ function populateGTFS() {
   if (anomalies.length === 0) {
     ael.innerHTML = '<p class="empty" style="color:#66bb6a">✓ No anomalies detected</p>';
   } else {
-    // Group by train
-    const byTrain = {};
-    for (const a of anomalies) {
-      const k = a.day + ' ' + a.trainNo;
-      if (!byTrain[k]) byTrain[k] = { count: 0, diffs: [] };
-      byTrain[k].count++;
-      byTrain[k].diffs.push(a.diff * Math.sign(a.actual - a.predicted));
-    }
-    const sorted = Object.entries(byTrain).sort((a,b) => b[1].count - a[1].count).slice(0, 20);
     let html = `<p style="font-size:12px;color:#888;margin-bottom:8px">${anomalies.length} stops differ from route prediction by ≥3 mins</p>`;
-    html += `<p style="font-size:11px;color:#aaa;margin-bottom:4px">Top trains by anomaly count:</p>`;
-    html += `<table><thead><tr><th>Day</th><th>Train</th><th>Stops</th><th>Avg Δ</th></tr></thead><tbody>`;
-    for (const [k, v] of sorted) {
-      const [day, trainNo] = k.split(' ');
-      const avg = Math.round(v.diffs.reduce((a,b)=>a+b,0)/v.diffs.length);
-      html += `<tr class="warn"><td>${day}</td><td class="route-code">${trainNo}</td><td>${v.count}</td><td style="font-family:monospace;color:#FFD000">${avg>0?'+':''}${avg} min</td></tr>`;
-    }
-    html += '</tbody></table>';
-    html += `<p style="font-size:11px;color:#aaa;margin:12px 0 4px">All anomalies:</p>`;
     html += `<table><thead><tr><th>Day</th><th>Train</th><th>Stop</th><th>TT DB</th><th>Route Predicts</th><th>Δ</th></tr></thead><tbody>`;
     for (const a of anomalies.slice(0, 50)) {
-      html += `<tr class="warn"><td>${a.day}</td><td class="route-code">${a.trainNo}</td><td class="stop-code">${a.code}</td><td class="time">${fmt(a.actual)}</td><td class="time">${fmt(a.predicted)}</td><td style="font-family:monospace;color:#FFD000">${a.diff > 0 ? '+' : '-'}${a.diff} min</td></tr>`;
+      html += `<tr class="warn">
+        <td>${a.day}</td>
+        <td class="route-code">${a.trainNo}</td>
+        <td class="stop-code">${a.code}</td>
+        <td class="time">${fmt(a.actual)}</td>
+        <td class="time">${fmt(a.predicted)}</td>
+        <td style="font-family:monospace;color:#FFD000">${a.diff > 0 ? '+' : '-'}${a.diff} min</td>
+      </tr>`;
     }
     if (anomalies.length > 50) html += `<tr><td colspan="6" style="color:#888;font-size:12px;padding:8px">…and ${anomalies.length-50} more</td></tr>`;
     html += '</tbody></table>';

@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 32 -->
-<!-- Update notes: Fixed all override train numbers to 4-digit TT DB format; added MON/FRI 2099/NEG, 1870/FYG, 2120/FYG, SAT 0962/PET, SUN 0968/PET -->
+<!-- TOOL_VERSION: 34 -->
+<!-- Update notes: Fixed stop code reverse lookup in GTFS overrides table — now uses same mapCode logic as anomaly detector so GTFS raw codes resolve correctly -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -560,10 +560,11 @@ function populateGTFS() {
       let val = undefined;
       if (trainStops) {
         if (trainStops[o.stop] !== undefined) { val = trainStops[o.stop]; }
-        else { for (const k of Object.keys(trainStops)) { if ((_gtfsCodeMap[k]||_yardMap[k]||k)===o.stop){val=trainStops[k];break;} } }
+        else { const mapC = c => _gtfsCodeMap[c]||_yardMap[c]||c; for (const k of Object.keys(trainStops)) { if (mapC(k)===o.stop){val=trainStops[k];break;} } }
       }
-      const inFile = val !== undefined && val === o.gtfsWrong;
-      const badge = inFile ? '<span class="badge pass">✓ Applied</span>' : `<span class="badge fail">✗ ${val!==undefined?'Found '+fmt(val):'Not found'}</span>`;
+      const isSuppressOnly = o.gtfsWrong === o.correct;
+      const inFile = isSuppressOnly ? true : (val !== undefined && val === o.gtfsWrong);
+      const badge = isSuppressOnly ? '<span class="badge info">⊘ Suppressed</span>' : (inFile ? '<span class="badge pass">✓ Applied</span>' : `<span class="badge fail">✗ ${val!==undefined?'Found '+fmt(val):'Not found'}</span>`);
       const delta = o.correct - o.gtfsWrong;
       html += `<tr class="${inFile?'pass':'fail'}">
         <td>${o.day}</td>

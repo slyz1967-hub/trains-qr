@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 34 -->
-<!-- Update notes: Fixed stop code reverse lookup in GTFS overrides table — now uses same mapCode logic as anomaly detector so GTFS raw codes resolve correctly -->
+<!-- TOOL_VERSION: 35 -->
+<!-- Update notes: Fixed all override train numbers back to 5-digit GTFS format (TT DB keys are 5-digit) -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -271,29 +271,29 @@ const GTFS_OVERRIDES = [
   { day: 'MON', train: '42030', stop: 'NAM', gtfsWrong: 696, correct: 696, reason: 'No outbound Sunshine Coast route — ELB→NAM uses reversed inbound CBT array, prediction unreliable' },
   { day: 'MON', train: '42081', stop: 'WOB', gtfsWrong: 1559, correct: 1559, reason: 'No outbound Sunshine Coast route — ELB→NAM overnight uses reversed inbound CBT array, prediction unreliable' },
   { day: 'MON', train: '42081', stop: 'NAM', gtfsWrong: 1564, correct: 1564, reason: 'No outbound Sunshine Coast route — ELB→NAM overnight uses reversed inbound CBT array, prediction unreliable' },
-  { day: 'MON', train: '2093', stop: 'KRP', gtfsWrong: 1535, correct: 1535, reason: 'BHI→KRP overnight via SHC — route misses SHC diversion (+54 min), no SHC_KPR cross-city route' },
-  { day: 'MON', train: '2093', stop: 'NTG', gtfsWrong: 1475, correct: 1475, reason: 'BHI→KRP overnight via SHC — route misses SHC diversion (+27 min)' },
-  { day: 'MON', train: '6X0', stop: 'TGA', gtfsWrong: 1044, correct: 1044, reason: 'GTFS stop code error — TGA (Taringa) should be THG (Thagoona); Taringa is express on this service' },
-  { day: 'MON', train: '6Y0', stop: 'TGA', gtfsWrong: 1104, correct: 1104, reason: 'GTFS stop code error — TGA (Taringa) should be THG (Thagoona); Taringa is express on this service' },
-  { day: 'MON', train: '2091', stop: 'BHI', gtfsWrong: 272, correct: 272, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~23 min' },
-  { day: 'MON', train: '2095', stop: 'BHI', gtfsWrong: 272, correct: 272, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~23 min' },
-  { day: 'MON', train: '2097', stop: 'BHI', gtfsWrong: 1112, correct: 1112, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~23 min' },
-  { day: 'MON', train: '2099', stop: 'NEG', gtfsWrong: 248, correct: 248, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~21 min' },
-  { day: 'MON', train: '1870', stop: 'FYG', gtfsWrong: 495, correct: 495, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~20 min' },
-  { day: 'MON', train: '2120', stop: 'FYG', gtfsWrong: 495, correct: 495, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~20 min' },
-  { day: 'FRI', train: '0967', stop: 'PET', gtfsWrong: 984, correct: 984, reason: 'BHI→KRP overnight via SHC — route misses SHC diversion (+27 min)' },
-  { day: 'FRI', train: '2093', stop: 'NTG', gtfsWrong: 1475, correct: 1475, reason: 'BHI→KRP overnight via SHC — route misses SHC diversion (+27 min)' },
-  { day: 'FRI', train: '2093', stop: 'KRP', gtfsWrong: 1535, correct: 1535, reason: 'BHI→KRP overnight via SHC — route misses SHC diversion (+54 min)' },
-  { day: 'FRI', train: '0965', stop: 'PET', gtfsWrong: 428, correct: 428, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~24 min' },
-  { day: 'FRI', train: '2091', stop: 'BHI', gtfsWrong: 272, correct: 272, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~23 min' },
-  { day: 'FRI', train: '2095', stop: 'BHI', gtfsWrong: 272, correct: 272, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~23 min' },
-  { day: 'FRI', train: '2097', stop: 'BHI', gtfsWrong: 1112, correct: 1112, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~23 min' },
-  { day: 'FRI', train: '2099', stop: 'NEG', gtfsWrong: 248, correct: 248, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~21 min' },
-  { day: 'FRI', train: '1870', stop: 'FYG', gtfsWrong: 495, correct: 495, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~20 min' },
-  { day: 'FRI', train: '2120', stop: 'FYG', gtfsWrong: 495, correct: 495, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~20 min' },
-  { day: 'SAT', train: '0962', stop: 'PET', gtfsWrong: 468, correct: 468, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~21 min' },
-  { day: 'SAT', train: '0966', stop: 'PET', gtfsWrong: 593, correct: 593, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~24 min' },
-  { day: 'SUN', train: '0968', stop: 'PET', gtfsWrong: 887, correct: 887, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~21 min' },
+  { day: 'MON', train: '42093', stop: 'KRP', gtfsWrong: 1535, correct: 1535, reason: 'BHI→KRP overnight via SHC — route misses SHC diversion (+54 min), no SHC_KPR cross-city route' },
+  { day: 'MON', train: '42093', stop: 'NTG', gtfsWrong: 1475, correct: 1475, reason: 'BHI→KRP overnight via SHC — route misses SHC diversion (+27 min)' },
+  { day: 'MON', train: '16X0', stop: 'TGA', gtfsWrong: 1044, correct: 1044, reason: 'GTFS stop code error — TGA (Taringa) should be THG (Thagoona); Taringa is express on this service' },
+  { day: 'MON', train: '16Y0', stop: 'TGA', gtfsWrong: 1104, correct: 1104, reason: 'GTFS stop code error — TGA (Taringa) should be THG (Thagoona); Taringa is express on this service' },
+  { day: 'MON', train: '42091', stop: 'BHI', gtfsWrong: 272, correct: 272, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~23 min' },
+  { day: 'MON', train: '42095', stop: 'BHI', gtfsWrong: 272, correct: 272, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~23 min' },
+  { day: 'MON', train: '42097', stop: 'BHI', gtfsWrong: 1112, correct: 1112, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~23 min' },
+  { day: 'MON', train: '42099', stop: 'NEG', gtfsWrong: 248, correct: 248, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~21 min' },
+  { day: 'MON', train: '41870', stop: 'FYG', gtfsWrong: 495, correct: 495, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~20 min' },
+  { day: 'MON', train: '42120', stop: 'FYG', gtfsWrong: 495, correct: 495, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~20 min' },
+  { day: 'FRI', train: '40967', stop: 'PET', gtfsWrong: 984, correct: 984, reason: 'BHI→KRP overnight via SHC — route misses SHC diversion (+27 min)' },
+  { day: 'FRI', train: '42093', stop: 'NTG', gtfsWrong: 1475, correct: 1475, reason: 'BHI→KRP overnight via SHC — route misses SHC diversion (+27 min)' },
+  { day: 'FRI', train: '42093', stop: 'KRP', gtfsWrong: 1535, correct: 1535, reason: 'BHI→KRP overnight via SHC — route misses SHC diversion (+54 min)' },
+  { day: 'FRI', train: '40965', stop: 'PET', gtfsWrong: 428, correct: 428, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~24 min' },
+  { day: 'FRI', train: '42091', stop: 'BHI', gtfsWrong: 272, correct: 272, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~23 min' },
+  { day: 'FRI', train: '42095', stop: 'BHI', gtfsWrong: 272, correct: 272, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~23 min' },
+  { day: 'FRI', train: '42097', stop: 'BHI', gtfsWrong: 1112, correct: 1112, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~23 min' },
+  { day: 'FRI', train: '42099', stop: 'NEG', gtfsWrong: 248, correct: 248, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~21 min' },
+  { day: 'FRI', train: '41870', stop: 'FYG', gtfsWrong: 495, correct: 495, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~20 min' },
+  { day: 'FRI', train: '42120', stop: 'FYG', gtfsWrong: 495, correct: 495, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~20 min' },
+  { day: 'SAT', train: '40962', stop: 'PET', gtfsWrong: 468, correct: 468, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~21 min' },
+  { day: 'SAT', train: '40966', stop: 'PET', gtfsWrong: 593, correct: 593, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~24 min' },
+  { day: 'SUN', train: '40968', stop: 'PET', gtfsWrong: 887, correct: 887, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~21 min' },
 ];
 
 // ── File loading ───────────────────────────────────────────────────

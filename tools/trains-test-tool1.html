@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 36 -->
-<!-- Update notes: Override train key lookup now tries string and numeric forms — fixes Not found when TT DB keys are numeric -->
+<!-- TOOL_VERSION: 38 -->
+<!-- Update notes: Added suppression overrides for 40961/40963/NTG, DK22/CND/OXL MON+FRI, T101/MNY+CBT SAT, 40964/PET SUN -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -294,6 +294,19 @@ const GTFS_OVERRIDES = [
   { day: 'SAT', train: '40962', stop: 'PET', gtfsWrong: 468, correct: 468, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~21 min' },
   { day: 'SAT', train: '40966', stop: 'PET', gtfsWrong: 593, correct: 593, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~24 min' },
   { day: 'SUN', train: '40968', stop: 'PET', gtfsWrong: 887, correct: 887, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~21 min' },
+  { day: 'MON', train: '40961', stop: 'NTG', gtfsWrong: 1276, correct: 1276, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~19 min' },
+  { day: 'MON', train: '40963', stop: 'NTG', gtfsWrong: 1276, correct: 1276, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~19 min' },
+  { day: 'MON', train: 'DK22', stop: 'CND', gtfsWrong: 605, correct: 605, reason: 'DK22 CBT→SPF — CBT route array offset error at Corinda, prediction unreliable' },
+  { day: 'MON', train: 'DK22', stop: 'OXL', gtfsWrong: 608, correct: 608, reason: 'DK22 CBT→SPF — CBT route array offset error at Oxley, prediction unreliable' },
+  { day: 'FRI', train: 'DK22', stop: 'CND', gtfsWrong: 605, correct: 605, reason: 'DK22 CBT→SPF — CBT route array offset error at Corinda, prediction unreliable' },
+  { day: 'FRI', train: 'DK22', stop: 'OXL', gtfsWrong: 608, correct: 608, reason: 'DK22 CBT→SPF — CBT route array offset error at Oxley, prediction unreliable' },
+  { day: 'SAT', train: 'T101', stop: 'MNY', gtfsWrong: 285, correct: 285, reason: 'T101 BHI→CBT early morning — route prediction unreliable, adds ~19 min at Morayfield' },
+  { day: 'SAT', train: 'T101', stop: 'CBT', gtfsWrong: 289, correct: 289, reason: 'T101 BHI→CBT early morning — route prediction unreliable, adds ~19 min at Caboolture' },
+  { day: 'SUN', train: '40964', stop: 'PET', gtfsWrong: 1005, correct: 1005, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~19 min' },
+  { day: 'SAT', train: 'T1M1', stop: 'MNY', gtfsWrong: 285, correct: 285, reason: 'T1M1 — not a real train, bad GTFS data, suppress' },
+  { day: 'SAT', train: 'T1M1', stop: 'CBT', gtfsWrong: 289, correct: 289, reason: 'T1M1 — not a real train, bad GTFS data, suppress' },
+  { day: 'SUN', train: 'T1M1', stop: 'MNY', gtfsWrong: 285, correct: 285, reason: 'T1M1 — not a real train, bad GTFS data, suppress' },
+  { day: 'SUN', train: 'T1M1', stop: 'CBT', gtfsWrong: 289, correct: 289, reason: 'T1M1 — not a real train, bad GTFS data, suppress' },
 ];
 
 // ── File loading ───────────────────────────────────────────────────

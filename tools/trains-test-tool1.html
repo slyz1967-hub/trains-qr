@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 35 -->
-<!-- Update notes: Fixed all override train numbers back to 5-digit GTFS format (TT DB keys are 5-digit) -->
+<!-- TOOL_VERSION: 36 -->
+<!-- Update notes: Override train key lookup now tries string and numeric forms — fixes Not found when TT DB keys are numeric -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -556,7 +556,7 @@ function populateGTFS() {
     let html = `<table><thead><tr><th>Day</th><th>Train</th><th>Stop</th><th>GTFS (wrong)</th><th>Correct</th><th>Δ</th><th>Reason</th><th>In File?</th></tr></thead><tbody>`;
     for (const o of GTFS_OVERRIDES) {
       const db = _ttDBs[o.day.toLowerCase()];
-      const trainStops = db && db[o.train];
+      const trainStops = db && (db[o.train] ?? db[String(o.train)] ?? db[Number(o.train)]);
       let val = undefined;
       if (trainStops) {
         if (trainStops[o.stop] !== undefined) { val = trainStops[o.stop]; }

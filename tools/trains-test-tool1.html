@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 27 -->
-<!-- Update notes: Added GTFS stop code errors: 10U5/16X0/16Y0 use TGA (Taringa) where stop is actually THG (Thagoona) — Taringa is express on these services so GTFS has no valid TGA entry -->
+<!-- TOOL_VERSION: 28 -->
+<!-- Update notes: Added GTFS_OVERRIDES for 41483/42030/42081 (ELB→NAM, no outbound Sunshine Coast route), 42093 (BHI→KRP via SHC overnight, route misses SHC diversion) -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -265,7 +265,14 @@ const GTFS_OVERRIDES = [
   { day: 'MON', train: '1003', stop: 'GCV', gtfsWrong: 366, correct: 386, reason: 'GTFS time wrong — Graceville shows 06:06, WTT is 06:26' },
   { day: 'MON', train: '1005', stop: 'RVW', gtfsWrong: 377, correct: 374, reason: 'GTFS time wrong — Riverview shows 06:17, WTT is 06:14' },
   { day: 'MON', train: '1005', stop: 'RDB', gtfsWrong: 380, correct: 377, reason: 'GTFS time wrong — Redbank shows 06:20, WTT is 06:17' },
-  { day: 'MON', train: '10U5', stop: 'TGA', gtfsWrong: 411, correct: 411, reason: 'GTFS stop code error — TGA (Taringa) should be THG (Thagoona); Taringa is express on this service' },
+  { day: 'MON', train: '41483', stop: 'WOB', gtfsWrong: 688, correct: 688, reason: 'No outbound Sunshine Coast route — ELB→NAM uses reversed inbound CBT array, prediction unreliable' },
+  { day: 'MON', train: '41483', stop: 'NAM', gtfsWrong: 696, correct: 696, reason: 'No outbound Sunshine Coast route — ELB→NAM uses reversed inbound CBT array, prediction unreliable' },
+  { day: 'MON', train: '42030', stop: 'WOB', gtfsWrong: 688, correct: 688, reason: 'No outbound Sunshine Coast route — ELB→NAM uses reversed inbound CBT array, prediction unreliable' },
+  { day: 'MON', train: '42030', stop: 'NAM', gtfsWrong: 696, correct: 696, reason: 'No outbound Sunshine Coast route — ELB→NAM uses reversed inbound CBT array, prediction unreliable' },
+  { day: 'MON', train: '42081', stop: 'WOB', gtfsWrong: 1559, correct: 1559, reason: 'No outbound Sunshine Coast route — ELB→NAM overnight uses reversed inbound CBT array, prediction unreliable' },
+  { day: 'MON', train: '42081', stop: 'NAM', gtfsWrong: 1564, correct: 1564, reason: 'No outbound Sunshine Coast route — ELB→NAM overnight uses reversed inbound CBT array, prediction unreliable' },
+  { day: 'MON', train: '42093', stop: 'KRP', gtfsWrong: 1535, correct: 1535, reason: 'BHI→KRP overnight via SHC — route misses SHC diversion (+54 min), no SHC_KPR cross-city route' },
+  { day: 'MON', train: '42093', stop: 'NTG', gtfsWrong: 1475, correct: 1475, reason: 'BHI→KRP overnight via SHC — route misses WOL/EGJ stops and SHC diversion' },
   { day: 'MON', train: '16X0', stop: 'TGA', gtfsWrong: 1044, correct: 1044, reason: 'GTFS stop code error — TGA (Taringa) should be THG (Thagoona); Taringa is express on this service' },
   { day: 'MON', train: '16Y0', stop: 'TGA', gtfsWrong: 1104, correct: 1104, reason: 'GTFS stop code error — TGA (Taringa) should be THG (Thagoona); Taringa is express on this service' },
 ];

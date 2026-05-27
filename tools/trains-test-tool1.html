@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 46 -->
-<!-- Update notes: Default anomaly threshold raised to 25 min — clears SHC overnight diversion false positives. Slider max raised to 60. -->
+<!-- TOOL_VERSION: 47 -->
+<!-- Update notes: Fixed WTT test cases — DG18 expected values corrected post-v996 route changes; DK06 BHI→SPC IRP/DAR/SPF/SPC values corrected and SPC stop added; DK06 SPC→KRP removed (no GTFS anchor); 1Y17 label fixed RSW→KRP, EGJ corrected to 530. -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -228,8 +228,7 @@ const WTT_TESTS = [
     label: '1730 SUN FYG→BNH (cross-city)',
     trainNo: '1730', day: 'sun', origin: 'FYG', dest: 'BNH', guardOrigin: 'FYG',
     stops: { FYG: 662, KEP: 666, GRV: 668, BHI: 688, FVY: 690, CTL: 693, RST: 697, SBE: 702, SLY: 721, ATI: 731, BNH: 761 }
-  }
-,
+  },
   {
     label: 'DS42 MON DBN→BGR',
     trainNo: 'DS42', day: 'mon', origin: 'DBN', dest: 'BGR', guardOrigin: 'DBN',
@@ -238,22 +237,17 @@ const WTT_TESTS = [
   {
     label: 'DG18 MON BDT→BGR',
     trainNo: 'DG18', day: 'mon', origin: 'BDT', dest: 'BGR', guardOrigin: 'BDT',
-    stops: { BDT: 484, EGJ: 499, BHI: 505, RST: 513, BGR: 522 }
+    stops: { BDT: 484, EGJ: 495, BHI: 503, RST: 512, BGR: 522 }
   },
   {
     label: 'DK06 MON BHI→SPC',
     trainNo: 'DK06', day: 'mon', origin: 'BHI', dest: 'SPC', guardOrigin: 'BHI',
-    stops: { BHI: 337, RST: 345, IRP: 357, DAR: 371, SPF: 384 }
+    stops: { BHI: 337, RST: 345, IRP: 370, DAR: 384, SPF: 392, SPC: 395 }
   },
   {
-    label: 'DK06 MON SPC→KRP',
-    trainNo: 'DK06', day: 'mon', origin: 'SPC', dest: 'KRP', guardOrigin: 'SPC',
-    stops: { SPC: 395, DAR: 406, EGJ: 439, NTG: 442, KRP: 486 }
-  },
-  {
-    label: '1Y17 MON IPW→KRP',
+    label: '1Y17 MON RSW→KRP',
     trainNo: '1Y17', day: 'mon', origin: 'RSW', dest: 'KRP', guardOrigin: 'RSW',
-    stops: { RSW: 450, IPS: 471, BHI: 527, EGJ: 533, KRP: 580 }
+    stops: { RSW: 450, IPS: 471, BHI: 527, EGJ: 530, KRP: 580 }
   }
 ];
 

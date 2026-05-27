@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 43 -->
-<!-- Update notes: Anomaly detector now skips all non-numeric train numbers (DK/1K/TK/DY/DS etc.) — they have no GTFS entries so predictions are meaningless. Default threshold raised from 3 to 20 min — eliminates thousands of false positives, surfaces only genuine errors. -->
+<!-- TOOL_VERSION: 44 -->
+<!-- Update notes: Removed all v42 alpha-train suppress-only entries from GTFS_OVERRIDES — redundant now that anomaly detector skips non-numeric train numbers entirely. -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -333,58 +333,6 @@ const GTFS_OVERRIDES = [
   { day: 'FRI', train: 'T401', stop: 'GYN', gtfsWrong: 763, correct: 763, reason: 'T401 — route prediction unreliable at Gympie North, +15 min discrepancy' },
   { day: 'FRI', train: '1K16', stop: 'CHM', gtfsWrong: 509, correct: 509, reason: '1K16 — route prediction unreliable at Chelmer, -15 min discrepancy' },
   { day: 'SAT', train: '42117', stop: 'KRY', gtfsWrong: 332, correct: 332, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~15 min' },
-  // D-train/K-train/T-train services — no GTFS entry, anomaly detector uses wrong anchor
-  { day: 'MON', train: 'DK42', stop: 'CHM', gtfsWrong: 890, correct: 890, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DK44', stop: 'CHM', gtfsWrong: 908, correct: 908, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DK46', stop: 'CHM', gtfsWrong: 926, correct: 926, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DK48', stop: 'CHM', gtfsWrong: 947, correct: 947, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DK52', stop: 'CHM', gtfsWrong: 977, correct: 977, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DK56', stop: 'CHM', gtfsWrong: 1001, correct: 1001, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DK58', stop: 'CHM', gtfsWrong: 1013, correct: 1013, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DK66', stop: 'CHM', gtfsWrong: 1082, correct: 1082, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DK68', stop: 'CHM', gtfsWrong: 1073, correct: 1073, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DK72', stop: 'CHM', gtfsWrong: 1106, correct: 1106, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DK76', stop: 'CHM', gtfsWrong: 1133, correct: 1133, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DK80', stop: 'CHM', gtfsWrong: 1163, correct: 1163, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DKS2', stop: 'CHM', gtfsWrong: 1014, correct: 1014, reason: 'DKS train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'DKS4', stop: 'CHM', gtfsWrong: 1044, correct: 1044, reason: 'DKS train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: '1K44', stop: 'CHM', gtfsWrong: 917, correct: 917, reason: '1K train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: '1K50', stop: 'CHM', gtfsWrong: 962, correct: 962, reason: '1K train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: '1K52', stop: 'CHM', gtfsWrong: 977, correct: 977, reason: '1K train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: '1K66', stop: 'CHM', gtfsWrong: 1061, correct: 1061, reason: '1K train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: 'TK46', stop: 'CHM', gtfsWrong: 932, correct: 932, reason: 'TK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'MON', train: '1K16', stop: 'CND', gtfsWrong: 515, correct: 515, reason: '1K16 — anchor mismatch causes false +14 min anomaly at Corinda' },
-  { day: 'MON', train: '1K16', stop: 'OXL', gtfsWrong: 518, correct: 518, reason: '1K16 — anchor mismatch causes false +14 min anomaly at Oxley' },
-  { day: 'MON', train: '1K16', stop: 'DAR', gtfsWrong: 521, correct: 521, reason: '1K16 — anchor mismatch causes false +14 min anomaly at Darra' },
-  { day: 'MON', train: '42081', stop: 'LBH', gtfsWrong: 1529, correct: 1529, reason: 'Overnight service — LBH not in route DB, prediction unreliable' },
-  { day: 'FRI', train: 'DK42', stop: 'CHM', gtfsWrong: 890, correct: 890, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DK44', stop: 'CHM', gtfsWrong: 908, correct: 908, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DK46', stop: 'CHM', gtfsWrong: 932, correct: 932, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DK48', stop: 'CHM', gtfsWrong: 947, correct: 947, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DK52', stop: 'CHM', gtfsWrong: 977, correct: 977, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DK56', stop: 'CHM', gtfsWrong: 1001, correct: 1001, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DK58', stop: 'CHM', gtfsWrong: 1013, correct: 1013, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DK68', stop: 'CHM', gtfsWrong: 1073, correct: 1073, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DK72', stop: 'CHM', gtfsWrong: 1106, correct: 1106, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DK76', stop: 'CHM', gtfsWrong: 1133, correct: 1133, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DK80', stop: 'CHM', gtfsWrong: 1163, correct: 1163, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DK66', stop: 'CHM', gtfsWrong: 1082, correct: 1082, reason: 'DK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DKS2', stop: 'CHM', gtfsWrong: 1014, correct: 1014, reason: 'DKS train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'DKS4', stop: 'CHM', gtfsWrong: 1044, correct: 1044, reason: 'DKS train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: '1K46', stop: 'CHM', gtfsWrong: 926, correct: 926, reason: '1K train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: '1K52', stop: 'CHM', gtfsWrong: 977, correct: 977, reason: '1K train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: '1K66', stop: 'CHM', gtfsWrong: 1061, correct: 1061, reason: '1K train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'TK44', stop: 'CHM', gtfsWrong: 917, correct: 917, reason: 'TK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'TK46', stop: 'CHM', gtfsWrong: 932, correct: 932, reason: 'TK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: 'TK50', stop: 'CHM', gtfsWrong: 962, correct: 962, reason: 'TK train — no GTFS numeric entry, anchor mismatch causes false +14 min anomaly at Chelmer' },
-  { day: 'FRI', train: '1K16', stop: 'CND', gtfsWrong: 515, correct: 515, reason: '1K16 — anchor mismatch causes false +14 min anomaly at Corinda' },
-  { day: 'FRI', train: '1K16', stop: 'OXL', gtfsWrong: 518, correct: 518, reason: '1K16 — anchor mismatch causes false +14 min anomaly at Oxley' },
-  { day: 'FRI', train: '1K16', stop: 'DAR', gtfsWrong: 521, correct: 521, reason: '1K16 — anchor mismatch causes false +14 min anomaly at Darra' },
-  { day: 'FRI', train: '42081', stop: 'LBH', gtfsWrong: 1529, correct: 1529, reason: 'Overnight service — LBH not in route DB, prediction unreliable' },
-  { day: 'FRI', train: '41483', stop: 'WOB', gtfsWrong: 688, correct: 688, reason: 'No outbound Sunshine Coast route — ELB→NAM uses reversed inbound CBT array, prediction unreliable' },
-  { day: 'SAT', train: '42080', stop: 'LBH', gtfsWrong: 1362, correct: 1362, reason: 'Overnight service — LBH not in route DB, prediction unreliable' },
-  { day: 'SAT', train: 'DY09', stop: 'ZLL', gtfsWrong: 465, correct: 465, reason: 'DY09 — anchor mismatch causes false +14 min anomaly at Zillmere' },
-  { day: 'SAT', train: 'DY09', stop: 'CDE', gtfsWrong: 468, correct: 468, reason: 'DY09 — anchor mismatch causes false +14 min anomaly at Carseldine' },
 ];
 
 // ── File loading ───────────────────────────────────────────────────

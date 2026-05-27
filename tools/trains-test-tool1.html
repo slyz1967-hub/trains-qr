@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 38 -->
-<!-- Update notes: Added suppression overrides for 40961/40963/NTG, DK22/CND/OXL MON+FRI, T101/MNY+CBT SAT, 40964/PET SUN -->
+<!-- TOOL_VERSION: 39 -->
+<!-- Update notes: Added suppression overrides for 41873/42053/FYG, 42083/42089/NTG, DK22/SHW MON+FRI; 41483/42030/NAM FRI; 42085/42113/NTG SAT; 42087/NTG SUN — all SHC diversion or known route offset errors +16 min -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -307,6 +307,21 @@ const GTFS_OVERRIDES = [
   { day: 'SAT', train: 'T1M1', stop: 'CBT', gtfsWrong: 289, correct: 289, reason: 'T1M1 — not a real train, bad GTFS data, suppress' },
   { day: 'SUN', train: 'T1M1', stop: 'MNY', gtfsWrong: 285, correct: 285, reason: 'T1M1 — not a real train, bad GTFS data, suppress' },
   { day: 'SUN', train: 'T1M1', stop: 'CBT', gtfsWrong: 289, correct: 289, reason: 'T1M1 — not a real train, bad GTFS data, suppress' },
+  { day: 'MON', train: '41873', stop: 'FYG', gtfsWrong: 491, correct: 491, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~16 min' },
+  { day: 'MON', train: '42053', stop: 'FYG', gtfsWrong: 491, correct: 491, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~16 min' },
+  { day: 'MON', train: '42083', stop: 'NTG', gtfsWrong: 933, correct: 933, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~16 min' },
+  { day: 'MON', train: '42089', stop: 'NTG', gtfsWrong: 323, correct: 323, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~16 min' },
+  { day: 'MON', train: 'DK22', stop: 'SHW', gtfsWrong: 603, correct: 603, reason: 'DK22 CBT→SPF — CBT route array offset error at Sherwood, prediction unreliable' },
+  { day: 'FRI', train: '41483', stop: 'NAM', gtfsWrong: 696, correct: 696, reason: 'No outbound Sunshine Coast route — ELB→NAM uses reversed inbound CBT array, prediction unreliable' },
+  { day: 'FRI', train: '41873', stop: 'FYG', gtfsWrong: 491, correct: 491, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~16 min' },
+  { day: 'FRI', train: '42030', stop: 'NAM', gtfsWrong: 696, correct: 696, reason: 'No outbound Sunshine Coast route — ELB→NAM uses reversed inbound CBT array, prediction unreliable' },
+  { day: 'FRI', train: '42053', stop: 'FYG', gtfsWrong: 491, correct: 491, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~16 min' },
+  { day: 'FRI', train: '42083', stop: 'NTG', gtfsWrong: 933, correct: 933, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~16 min' },
+  { day: 'FRI', train: '42089', stop: 'NTG', gtfsWrong: 323, correct: 323, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~16 min' },
+  { day: 'FRI', train: 'DK22', stop: 'SHW', gtfsWrong: 603, correct: 603, reason: 'DK22 CBT→SPF — CBT route array offset error at Sherwood, prediction unreliable' },
+  { day: 'SAT', train: '42085', stop: 'NTG', gtfsWrong: 270, correct: 270, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~16 min' },
+  { day: 'SAT', train: '42113', stop: 'NTG', gtfsWrong: 293, correct: 293, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~16 min' },
+  { day: 'SUN', train: '42087', stop: 'NTG', gtfsWrong: 323, correct: 323, reason: 'Overnight service via SHC — route prediction unreliable, SHC diversion adds ~16 min' },
 ];
 
 // ── File loading ───────────────────────────────────────────────────

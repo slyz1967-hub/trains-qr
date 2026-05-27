@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRAINS Test & Integrity Tool</title>
-<!-- TOOL_VERSION: 39 -->
-<!-- Update notes: Added suppression overrides for 41873/42053/FYG, 42083/42089/NTG, DK22/SHW MON+FRI; 41483/42030/NAM FRI; 42085/42113/NTG SAT; 42087/NTG SUN — all SHC diversion or known route offset errors +16 min -->
+<!-- TOOL_VERSION: 40 -->
+<!-- Update notes: Fixed override suppression: now matches on raw GTFS code OR mapped code so all 15 anomalies are correctly suppressed -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
@@ -627,7 +627,7 @@ function populateGTFS() {
       for (const [code, actualMins] of entries) {
         const mapped = mapCode(code);
         // Skip stops already documented in GTFS_OVERRIDES — known errors, not anomalies
-        const override = GTFS_OVERRIDES.find(o => o.day === day.toUpperCase() && o.train === trainNo && o.stop === mapped);
+        const override = GTFS_OVERRIDES.find(o => o.day === day.toUpperCase() && o.train === trainNo && (o.stop === mapped || o.stop === code));
         if (override) continue;
         const routeStop = route.find(s => s.code === mapped);
         if (!routeStop) continue;
